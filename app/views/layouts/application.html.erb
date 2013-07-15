@@ -14,8 +14,15 @@
 		</div>
 		<div id="columns">
 			<div id="side">
+				<% if @cart %>
+					<%= hidden_div_if(@cart.line_items.empty?, id: "cart") do %>
+						<%= render @cart %>
+					<% end %>
+				<% end %>
+				
 				<ul>
-					<li><a href="http://www...">Home</a></li>
+					<!-- <li><a href="http://www...">Home</a></li> -->
+					<li><%= link_to "Home", root_path %></li>
 					<li><a href="">Questions</a></li>
 					<li><a href="">News</a></li>
 					<li><a href="">Contact</a></li>
