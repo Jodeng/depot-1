@@ -1,4 +1,5 @@
 class OrdersController < ApplicationController
+  skip_before_filter :authorize, only: [:new, :create]
   before_action :set_order, only: [:show, :edit, :update, :destroy]
 
   # GET /orders
@@ -22,7 +23,7 @@ class OrdersController < ApplicationController
   def new
     @cart = current_cart
     if @cart.line_items.empty?
-      redirect_to root_path, notice: "Your cart is empty"
+      redirect_to store_url, notice: "Your cart is empty"
       return
     end
     
@@ -37,14 +38,14 @@ class OrdersController < ApplicationController
   # POST /orders.json
   def create
     @order = Order.new(order_params)
-    # @order = Order.new(params[:order])
     @order.add_line_items_from_cart(current_cart)
 
     respond_to do |format|
       if @order.save
         Cart.destroy(session[:cart_id])
         session[:cart_id] = nil
-        format.html { redirect_to root_path, notice: 'Thank you for your order.' }
+        OrderNotifier.received(@order).deliver
+        format.html { redirect_to store_url, notice: 'Thank you for your order.' }
         format.json { render action: @order, status: :created, location: @order }
       else
         @cart = current_cart

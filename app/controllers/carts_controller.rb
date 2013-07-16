@@ -1,5 +1,6 @@
 class CartsController < ApplicationController
-  before_action :set_cart, only: [ :edit, :update, :destroy]
+  skip_before_filter :authorize, only: [:create, :update, :destroy]
+  before_action :set_cart, only: [:edit, :update, :destroy]
 
   # GET /carts
   # GET /carts.json
@@ -14,7 +15,7 @@ class CartsController < ApplicationController
       @cart = Cart.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       logger.error "Attempt to access invalid cart #{params[:id]}"
-      redirect_to root_path, notice: 'Invalid cart'
+      redirect_to store_url, notice: 'Invalid cart'
     else
       respond_to do |format|
         format.html
@@ -70,7 +71,7 @@ class CartsController < ApplicationController
     session[:cart_id] = nil
     
     respond_to do |format|
-      format.html { redirect_to root_path }
+      format.html { redirect_to store_url }
       format.json { head :no_content }
     end
   end

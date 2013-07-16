@@ -21,7 +21,7 @@ class LineItemsControllerTest < ActionController::TestCase
       post :create, product_id: products(:ruby).id
     end
 
-    assert_redirected_to root_path
+    assert_redirected_to store_url
   end
 
   test "should show line_item" do
